@@ -1,0 +1,34 @@
+version: '3'
+
+services:
+  todo_app:
+    restart: always
+    build: .
+    ports:
+      - "8080:8080"
+    networks:
+      todo-app-net:
+        ipv4_address: 10.0.0.3
+    environment:
+      MYSQL_HOST: mysqldb
+      MYSQL_USER: ${USER_LOGIN}
+      MYSQL_PASSWORD: ${USER_PASSWORD}
+      MYSQL_PORT: 3306
+
+  mysqldb:
+    container_name: mysqldb
+    image: mysql
+    networks:
+      todo-app-net:
+        ipv4_address: 10.0.0.2
+    environment:
+      MYSQL_DATABASE: ${USER_LOGIN_DB}
+      MYSQL_ROOT_PASSWORD: ${USER_PASSWORD}
+networks:
+  todo-app-net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.0.0.0/16
+          gateway: 10.0.0.1
+
